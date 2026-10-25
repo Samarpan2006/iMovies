@@ -22,6 +22,7 @@ router.get('/bollywood', getBollywoodEndpoint);
 router.get('/discover', getDiscoverEndpoint);
 router.get('/sections', getMovieSections);
 router.get('/', getAllMovies);
+router.get('/:movieId(\\d+)', getMovieById);
 router.get('/:movieId', getMovieById);
 
 // Admin-only movie management routes
