@@ -11,18 +11,33 @@ const { sendShowReminders } = require('./utils/reminderService');
 const app = express();
 const server = http.createServer(app);
 
-const clientOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
+const allowedOrigins = [
+  'https://i-movies-swart.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+  process.env.CLIENT_URL
+].filter(Boolean);
+
 const io = new Server(server, {
   cors: {
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE']
+    origin: (origin, callback) => {
+      callback(null, true);
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
   }
 });
 
 app.set('io', io);
 
 app.use(cors({
-  origin: '*',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(null, true);
+    }
+  },
   credentials: true
 }));
 app.use(express.json());
