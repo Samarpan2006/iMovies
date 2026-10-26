@@ -37,16 +37,24 @@ const Login = () => {
 
       if (res.data.success) {
         localStorage.setItem('token', res.data.token);
-        const userData = isAdminLogin
-          ? { ...(res.data.admin || {}), isAdmin: true }
-          : { ...(res.data.user || {}), isAdmin: false };
+        const isUserAdmin = Boolean(
+          isAdminLogin ||
+          res.data.admin ||
+          res.data.user?.isAdmin ||
+          res.data.user?.role === 'admin'
+        );
+        const userData = {
+          ...(res.data.admin || res.data.user || {}),
+          isAdmin: isUserAdmin,
+          role: isUserAdmin ? 'admin' : (res.data.user?.role || 'user')
+        };
         localStorage.setItem('user', JSON.stringify(userData));
 
         toast.success(
-          `Welcome back, ${userData.username || (isAdminLogin ? 'Admin' : 'User')}!`
+          `Welcome back, ${userData.username || (isUserAdmin ? 'Admin' : 'User')}!`
         );
 
-        if (isAdminLogin) {
+        if (isUserAdmin) {
           navigate('/admin');
         } else {
           navigate('/home');

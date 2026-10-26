@@ -304,8 +304,35 @@ exports.loginUser = async (req, res) => {
     }
 
     const cleanEmail = email.toLowerCase().trim();
-    const user = await User.findOne({ email: cleanEmail });
+    let user = await User.findOne({ email: cleanEmail });
     if (!user) {
+      // Fallback: Check Admin collection for unified seamless authentication
+      const admin = await Admin.findOne({ email: cleanEmail });
+      if (admin) {
+        const isAdminMatch = await bcrypt.compare(password, admin.password);
+        if (!isAdminMatch) {
+          return res.status(400).json({ success: false, message: 'Invalid credentials.' });
+        }
+        const token = generateToken({
+          id: admin._id,
+          username: admin.username,
+          email: admin.email,
+          role: 'admin',
+          isAdmin: true
+        });
+        return res.json({
+          success: true,
+          message: 'Login successful.',
+          token,
+          user: {
+            id: admin._id,
+            username: admin.username,
+            email: admin.email,
+            role: 'admin',
+            isAdmin: true
+          }
+        });
+      }
       return res.status(400).json({ success: false, message: 'Invalid credentials.' });
     }
 

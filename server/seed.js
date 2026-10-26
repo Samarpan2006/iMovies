@@ -26,17 +26,22 @@ const seed = async () => {
     await mongoose.connect(MONGO_URI);
     console.log('MongoDB connected for seeding.');
 
-    // Seed Admin
+    // Seed Admin in both Admin and User collections for unified auth
     const existingAdmin = await Admin.findOne({ email: 'admin@imovies.com' });
+    const hashedAdminPassword = await bcrypt.hash('admin123', 10);
     if (!existingAdmin) {
-      const hashedAdminPassword = await bcrypt.hash('admin123', 10);
       await Admin.create({
         username: 'admin',
         email: 'admin@imovies.com',
         password: hashedAdminPassword
       });
-      console.log('Default Admin seeded: admin@imovies.com / admin123');
+      console.log('Default Admin seeded in Admin collection: admin@imovies.com / admin123');
     }
+    await User.findOneAndUpdate(
+      { email: 'admin@imovies.com' },
+      { username: 'admin', email: 'admin@imovies.com', password: hashedAdminPassword, role: 'admin', isVerified: true },
+      { upsert: true, returnDocument: 'after' }
+    );
 
     // Seed Demo User
     const existingUser = await User.findOne({ email: 'demo@imovies.com' });
