@@ -10,6 +10,7 @@ const {
   resetPassword,
   createAdmin,
   loginAdmin,
+  bootstrapAdmin,
   validateToken,
   validateAdmin,
   logout
@@ -33,6 +34,8 @@ router.post('/reset-password', resetPassword);
 
 // Admin Auth
 router.post('/admin/login', loginAdmin);
+router.get('/admin/bootstrap', bootstrapAdmin);
+router.post('/admin/bootstrap', bootstrapAdmin);
 // Secure: Only authenticated admins can register new sub-admins
 router.post('/admin/register', fetchUser, isAdmin, createAdmin);
 

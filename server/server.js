@@ -102,10 +102,39 @@ cron.schedule('0 9 * * *', () => {
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/imovies';
 
+// Auto-sync default administrator credentials in any environment (Render / Vercel / Local)
+const ensureDefaultAdmin = async () => {
+  try {
+    const Admin = require('./models/adminModel');
+    const User = require('./models/userModel');
+    const bcrypt = require('bcryptjs');
+
+    const adminEmail = 'admin@imovies.com';
+    const hashedPassword = await bcrypt.hash('admin123', 10);
+
+    await Admin.findOneAndUpdate(
+      { email: adminEmail },
+      { username: 'admin', email: adminEmail, password: hashedPassword },
+      { upsert: true, returnDocument: 'after' }
+    );
+
+    await User.findOneAndUpdate(
+      { email: adminEmail },
+      { username: 'admin', email: adminEmail, password: hashedPassword, role: 'admin', isVerified: true },
+      { upsert: true, returnDocument: 'after' }
+    );
+
+    console.log('🛡️ Default Admin successfully synchronized on server startup: admin@imovies.com / admin123');
+  } catch (err) {
+    console.error('Notice on admin startup sync:', err.message);
+  }
+};
+
 mongoose
   .connect(MONGO_URI)
-  .then(() => {
+  .then(async () => {
     console.log('MongoDB successfully connected.');
+    await ensureDefaultAdmin();
     server.listen(PORT, () => {
       console.log(`🎬 iMovies Server listening on port ${PORT}`);
     });
