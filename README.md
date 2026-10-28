@@ -4,6 +4,19 @@
 
 ---
 
+## 📁 Project Documentation
+
+Comprehensive technical documentation, architecture specifications, team structures, and architectural diagrams are available in the [`docs/`](./docs) directory:
+
+| Document | Description | Link |
+|---|---|:---:|
+| **🏛️ System Architecture** | Deep-dive into our MVC pattern, Mongoose models, controller logic, API view contracts, and request lifecycle | [**`docs/architecture.md`**](./docs/architecture.md) |
+| **👥 Team Roles & Responsibilities** | Comprehensive team contribution table, module ownership, and RACI responsibility matrix | [**`docs/roles.md`**](./docs/roles.md) |
+| **📊 Entity-Relationship (ER) Diagram** | Complete relational data model, schemas, foreign keys, and indexes in Mermaid.js | [**`docs/diagrams/er-diagram.md`**](./docs/diagrams/er-diagram.md) |
+| **🗺️ End-to-End User Flow** | Step-by-step user journey from landing & authentication to live ticket QR pass | [**`docs/diagrams/user-flow.md`**](./docs/diagrams/user-flow.md) |
+
+---
+
 ## 🌟 Key Features & Architectural Highlights
 
 ### 1. Live Market Cinema Feed (TMDB API)
@@ -40,28 +53,38 @@ Strict 5-step transaction flow:
 
 ```
 iMovies/
+├── docs/                       # Technical & Architectural Documentation
+│   ├── diagrams/
+│   │   ├── er-diagram.md       # Entity-Relationship (ER) Schema Diagram (Mermaid)
+│   │   └── user-flow.md        # End-to-End User Flowchart (Mermaid)
+│   ├── architecture.md         # MVC System Architecture & Data Flow Guide
+│   └── roles.md                # Team Roles & RACI Responsibility Matrix
 ├── client/                     # Frontend (Vite + React 19 + Tailwind CSS)
 │   ├── src/
-│   │   ├── components/         # Header, Footer, Loader, MovieCard, Protection
+│   │   ├── components/         # Header, Footer, Loader, MovieCard, OtpModal, Protection
 │   │   ├── hooks/              # useFetch custom hook
-│   │   ├── pages/              # 12 Route Pages with React.lazy
-│   │   ├── utils/              # api.js (Axios), whatsappHelper.js
+│   │   ├── pages/              # 16 Route Pages with React.lazy
+│   │   ├── utils/              # api.js (Axios), whatsappHelper.js, fuzzySearchHelper.js
 │   │   ├── App.jsx             # React Router with Suspense & ToastContainer
 │   │   ├── main.jsx
 │   │   └── index.css           # Tailwind Cinema Theme & Seat Styles
 │   ├── index.html              # Razorpay checkout SDK
+│   ├── vercel.json             # Vercel SPA Client Route Rewrites
 │   ├── vite.config.js          # Tailwind plugin configuration
 │   └── package.json
-└── server/                     # Backend (Node.js + Express + Socket.io)
-    ├── controllers/            # Auth, Movies, Theatres, Shows, Bookings, Payments, Reviews, Admin
-    ├── middlewares/            # fetchUser.js (JWT), isAdmin.js
-    ├── models/                 # 8 Mongoose Models (User, Admin, Movie, Theatre, Show, Booking, Favorite, Review)
-    ├── routes/                 # Express REST API routes under /api
-    ├── services/               # tmdbService.js, emailService.js
-    ├── utils/                  # cleanupService.js, reminderService.js, mailer.js
-    ├── seed.js                 # Database seed script for default credentials
-    ├── server.js               # Express + Socket.io + Cron entry point
-    └── .env                    # Environment credentials & keys
+├── server/                     # Backend (Node.js + Express + Socket.io)
+│   ├── config/                 # brevoConfig.js (Centralized Brevo Client)
+│   ├── controllers/            # Auth, Movies, Theatres, Shows, Bookings, Payments, Reviews, Admin, Email
+│   ├── middlewares/            # fetchUser.js (JWT), isAdmin.js (RBAC)
+│   ├── models/                 # 9 Mongoose Models (User, Admin, Movie, Theatre, Show, Booking, SeatLock, Favorite, Review)
+│   ├── routes/                 # Express REST API routes under /api
+│   ├── services/               # tmdbService.js, emailService.js, pdfTicketService.js
+│   ├── utils/                  # cleanupService.js, reminderService.js
+│   ├── seed.js                 # Database seed script for default credentials
+│   ├── server.js               # Express + Socket.io + Cron entry point
+│   └── .env.example            # Environment variables template
+├── vercel.json                 # Root Vercel SPA Rewrite Configuration
+└── README.md                   # Project Overview & Quick Start Guide
 ```
 
 ---
